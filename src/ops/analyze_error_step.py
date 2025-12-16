@@ -42,7 +42,7 @@ async def handler(event, context):
 
     try:
         # Use the "flash" model which is fast and free
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-flash-latest")
         
         # Call the API with JSON enforcement
         response = model.generate_content(
