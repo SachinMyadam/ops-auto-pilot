@@ -18,8 +18,8 @@ def run_bot():
         
         # 3. Generate Content (Using gemini-1.5-flash)
         response = client.models.generate_content(
-            model='gemini-1.5-flash', 
-            contents="Say 'Hello Hackathon Judges! I am fully operational!'"
+            model="gemini-1.5-flash", 
+            contents="Say "Hello Hackathon Judges! I am fully operational!""
         )
         print(f"🤖 Bot Says: {response.text}")
         
