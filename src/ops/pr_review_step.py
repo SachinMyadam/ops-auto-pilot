@@ -2,35 +2,44 @@ import os
 from google import genai
 
 def run_bot():
-    print("🚀 Starting Bot (Gemini 1.5 Flash)...")
+    print("🚀 Starting Bot (Auto-Discovery Mode)...")
     
     api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key:
+    if not api_key: 
         print("❌ Error: GOOGLE_API_KEY is missing")
         exit(1)
 
+    client = genai.Client(api_key=api_key)
+    
     try:
-        # Initialize the client
-        client = genai.Client(api_key=api_key)
+        print("📋 Asking Google for available models...")
+        # 1. Get list of all models your key can see
+        all_models = list(client.models.list())
         
-        # We try the specific version '-001' first, as it is often more stable in CI/CD
-        model_id = "gemini-1.5-flash-001"
+        # 2. Find any model with "gemini" in the name
+        # The API returns names like 'models/gemini-1.5-flash'
+        available_gemini = [m.name for m in all_models if "gemini" in m.name]
         
-        print(f"🔄 Connecting to {model_id}...")
+        if not available_gemini:
+            print("❌ No Gemini models found! Your key might be for Vertex AI, not AI Studio.")
+            print(f"Available models: {[m.name for m in all_models]}")
+            exit(1)
+
+        # 3. Pick the first one (e.g., 'models/gemini-1.5-flash-001')
+        # We remove the 'models/' prefix because the generate function sometimes prefers the short name
+        chosen_model = available_gemini[0].replace("models/", "")
         
+        print(f"✅ Found {len(available_gemini)} models. Selecting: {chosen_model}")
+
+        # 4. Run it
         response = client.models.generate_content(
-            model=model_id,
-            contents="Say 'Hello Hackathon Judges! I am running on Gemini 1.5 Flash!'"
+            model=chosen_model,
+            contents="Say 'Hello Hackathon Judges! I found a working model!'"
         )
-        
-        print(f"✅ SUCCESS!")
         print(f"🤖 Bot Says: {response.text}")
         
     except Exception as e:
-        print(f"❌ Error connecting to Gemini: {e}")
-        # Fallback: specific error handling helps debugging
-        if "404" in str(e):
-            print("💡 Tip: The model name might be slightly different for your API Key tier.")
+        print(f"❌ ERROR: {e}")
         exit(1)
 
 if __name__ == "__main__":
