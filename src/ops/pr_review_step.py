@@ -1,8 +1,8 @@
 import os
-import google.generativeai as genai
+from google import genai
 
 def run_bot():
-    print("🚀 Starting Bot...")
+    print("🚀 Starting Bot (New SDK)...")
 
     # 1. Check for the API Key
     api_key = os.getenv("GOOGLE_API_KEY")
@@ -12,14 +12,15 @@ def run_bot():
 
     print("✅ Found GOOGLE_API_KEY. Connecting to Gemini...")
 
-    # 2. Configure Gemini
+    # 2. Configure Gemini (New Client Syntax)
     try:
-        genai.configure(api_key=api_key)
-        # UPDATED MODEL NAME: gemini-1.5-flash
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        client = genai.Client(api_key=api_key)
         
-        # 3. Test generation
-        response = model.generate_content("Say 'Hello Hackathon Judges! I am alive!'")
+        # 3. Generate Content (Using gemini-1.5-flash)
+        response = client.models.generate_content(
+            model='gemini-1.5-flash', 
+            contents="Say 'Hello Hackathon Judges! I am fully operational!'"
+        )
         print(f"🤖 Bot Says: {response.text}")
         
     except Exception as e:
