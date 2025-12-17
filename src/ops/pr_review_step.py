@@ -17,9 +17,10 @@ def run_bot():
         client = genai.Client(api_key=api_key)
         
         # 3. Generate Content (Using gemini-1.5-flash)
+        # We use single quotes inside double quotes to avoid syntax errors
         response = client.models.generate_content(
-            model="gemini-1.5-flash", 
-            contents="Say "Hello Hackathon Judges! I am fully operational!""
+            model='gemini-1.5-flash', 
+            contents="Say 'Hello Hackathon Judges! I am fully operational!'"
         )
         print(f"🤖 Bot Says: {response.text}")
         
