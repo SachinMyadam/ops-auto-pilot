@@ -13,8 +13,6 @@ declare module 'motia' {
 
   interface Handlers {
     'GitHubWebhook': ApiRouteHandler<Record<string, unknown>, unknown, { topic: 'analyze-error'; data: never }>
-    'PRReviewer': EventHandler<never, never>
-    'DiscordNotifier': EventHandler<never, never>
     'AIAnalyzer': EventHandler<never, never>
     'ProcessGreeting': EventHandler<{ timestamp: string; appName: string; greetingPrefix: string; requestId: string }, never>
     'HelloAPI': ApiRouteHandler<Record<string, unknown>, ApiResponse<200, { message: string; status: string; appName: string }>, { topic: 'process-greeting'; data: { timestamp: string; appName: string; greetingPrefix: string; requestId: string } }>
