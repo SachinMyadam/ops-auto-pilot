@@ -1,46 +1,52 @@
 import os
+from dotenv import load_dotenv
 from google import genai
 
+load_dotenv()
+
 def run_bot():
-    print("🚀 Starting Bot (Auto-Discovery Mode)...")
+    print("🚀 AI Code Reviewer Starting...")
     
     api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key: 
-        print("❌ Error: GOOGLE_API_KEY is missing")
-        exit(1)
+    if not api_key: print("❌ Missing API Key"); exit(1)
 
     client = genai.Client(api_key=api_key)
     
+    # 1. Read the code file
     try:
-        print("📋 Asking Google for available models...")
-        # 1. Get list of all models your key can see
+        with open("bad_code.py", "r") as f:
+            code_content = f.read()
+    except FileNotFoundError:
+        print("❌ Could not find bad_code.py")
+        exit(1)
+
+    print("📋 Analyzing code for bugs...")
+
+    # 2. Ask Gemini to review it
+    prompt = f"""
+    You are a Senior Python Engineer. Review this code, find the bugs, 
+    and rewrite the corrected version.
+    
+    CODE:
+    {code_content}
+    """
+    
+    try:
+        # Auto-discover model again
         all_models = list(client.models.list())
+        chosen_model = [m.name for m in all_models if "gemini" in m.name][0].replace("models/", "")
         
-        # 2. Find any model with "gemini" in the name
-        # The API returns names like 'models/gemini-1.5-flash'
-        available_gemini = [m.name for m in all_models if "gemini" in m.name]
-        
-        if not available_gemini:
-            print("❌ No Gemini models found! Your key might be for Vertex AI, not AI Studio.")
-            print(f"Available models: {[m.name for m in all_models]}")
-            exit(1)
-
-        # 3. Pick the first one (e.g., 'models/gemini-1.5-flash-001')
-        # We remove the 'models/' prefix because the generate function sometimes prefers the short name
-        chosen_model = available_gemini[0].replace("models/", "")
-        
-        print(f"✅ Found {len(available_gemini)} models. Selecting: {chosen_model}")
-
-        # 4. Run it
         response = client.models.generate_content(
             model=chosen_model,
-            contents="Say 'Hello Hackathon Judges! I found a working model!'"
+            contents=prompt
         )
-        print(f"🤖 Bot Says: {response.text}")
+        print("\n" + "="*30)
+        print("🤖 AI REVIEW REPORT")
+        print("="*30)
+        print(response.text)
         
     except Exception as e:
-        print(f"❌ ERROR: {e}")
-        exit(1)
+        print(f"❌ Error: {e}")
 
 if __name__ == "__main__":
     run_bot()
