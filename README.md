@@ -23,8 +23,8 @@ Developing alone is hard. Without a second pair of eyes, simple bugs (like missi
 
 We utilized a hybrid architecture using **Motia** for orchestration and observability, and **GitHub Actions** for execution.
 
-![Motia Dashboard](https://github.com/SachinMyadam/ops-auto-pilot/assets/placeholder-image-link)
-*(Add your Motia screenshot link here later!)*
+<img width="1440" height="787" alt="Screenshot 2025-12-18 at 4 35 22 PM" src="https://github.com/user-attachments/assets/991b03b5-e72d-445d-983f-a2be6aa1863a" />
+
 
 1.  **Trigger:** Developer pushes code to GitHub.
 2.  **Orchestration (Motia):** A webhook sends the event payload to **Motia**, which traces the request and visualizes the event flow (`GitHubWebhook` → `AIAnalyzer`).
